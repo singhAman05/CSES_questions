@@ -1,0 +1,118 @@
+// Problem: Tree Diameter
+// Contest: CSES - CSES Problem Set
+// URL: https://cses.fi/problemset/task/1131
+// Memory Limit: 512 MB
+// Time Limit: 1000 ms
+// 
+// Powered by CP Editor (https://cpeditor.org)
+
+#include "bits/stdc++.h"
+
+using namespace std;
+typedef long long ll;
+typedef vector<int> vi;
+typedef vector<ll> vl;
+typedef pair<int, int> pii;
+typedef pair<ll, ll> pll;
+typedef vector<pii> vpi;
+typedef vector<pll> vpl;
+typedef map<int, int> mpi;
+typedef set<int> seti;
+typedef unordered_map<int,int> uom;
+typedef unordered_map<char,int> uocm;
+
+const ll MOD = 1e9 + 7;
+const ll INF = 1e18;
+
+#define FOR(i, a, b) for (int i = a; i <= b; i++)
+#define REP(i, a, b) for (int i = a; i < b; i++)
+#define REV(i, a, b) for (int i = a; i >= b; i--)
+#define all(v) v.begin(), v.end()
+
+// GCD
+ll gcd(ll a, ll b) {
+    return b == 0 ? a : gcd(b, a % b);
+}
+
+// LCM
+ll lcm(ll a, ll b) {
+    return (a / gcd(a, b)) * b;
+}
+
+// Modular Exponentiation
+ll mod_exp(ll base, ll exp, ll mod) {
+    ll result = 1;
+    while (exp > 0) {
+        if (exp % 2 == 1) result = (result * base) % mod;
+        base = (base * base) % mod;
+        exp /= 2;
+    }
+    return result;
+}
+
+// Factorial of a Number;
+ll factorial(ll n) {
+    ll result = 1;
+    for (int i = 2; i <= n; i++) {
+        result *= i;
+    }
+    return result;
+}
+
+// Prime Check
+bool is_prime(ll n) {
+    if (n < 2) return false;
+    for (ll i = 2; i * i <= n; i++) {
+        if (n % i == 0) return false;
+    }
+    return true;
+}
+
+int ans = 0;
+
+int solve(vector<int> adj[], int node, int par) {
+    int max1 = 0, max2 = 0;  // The top two longest paths
+
+    for (auto neighbor : adj[node]) {
+        if (neighbor == par) continue;  // Avoid revisiting the parent
+
+        int depth = solve(adj, neighbor, node);  // Recursive DFS call
+        if (depth > max1) {
+            max2 = max1;
+            max1 = depth;
+        } else if (depth > max2) {
+            max2 = depth;
+        }
+    }
+
+    // Update the diameter
+    ans = max(ans, max1 + max2);
+
+    return max1 + 1;  // Return the height of the current subtree
+}
+
+void fun() {
+    ll n;
+    cin >> n;
+    vector<int> adj[n + 1];  // Adjacency list for the tree
+    for (int i = 1; i < n; i++) {
+        ll a, b;
+        cin >> a >> b;
+        adj[a].push_back(b);
+        adj[b].push_back(a);
+    }
+    solve(adj, 1, -1);
+    cout << ans << endl;
+}
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(0);
+    cout.tie(0);
+    int t = 1;
+    // cin >> t;
+    while (t--) {
+        fun();
+    }
+    return 0;
+}
