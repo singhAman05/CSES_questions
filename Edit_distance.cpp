@@ -23,11 +23,13 @@ typedef unordered_map<char,int> uocm;
 
 const ll MOD = 1e9 + 7;
 const ll INF = 1e18;
+int dp[5001][5001];
 
 #define FOR(i, a, b) for (int i = a; i <= b; i++)
 #define REP(i, a, b) for (int i = a; i < b; i++)
 #define REV(i, a, b) for (int i = a; i >= b; i--)
 #define all(v) v.begin(), v.end()
+#define nl "\n"
 
 // GCD
 ll gcd(ll a, ll b) {
@@ -68,27 +70,33 @@ bool is_prime(ll n) {
     return true;
 }
 
-int dp[5001][5001];
+int solve(string &s1, string &s2, int i, int j) {
+    if (i == s1.size() && j == s2.size()) return 0;
+    if (i == s1.size()) return s2.size() - j;
+    if (j == s2.size()) return s1.size() - i;
+    if (dp[i][j] != -1) return dp[i][j];
 
-int solve(string &s1, string &s2, int i, int j){
-	if(i==s1.size()) return s2.size()-j;
-	if(j==s2.size()) return s1.size()-i;
-	if(dp[i][j]!=-1) return dp[i][j];
-	if(s1[i]==s2[j]){
-		return dp[i][j] = solve(s1,s2,i+1,j+1);
-	}
-	int a = solve(s1,s2,i,j+1);
-	int b = solve(s1,s2,i+1,j);
-	int c = solve(s1,s2,i+1,j+1);
-	
-	return dp[i][j] = 1+min({a,b,c});
+    int ans = INT_MAX;
+    for (int k = i; k < s1.size(); ++k) {
+        if (s1[k] == s2[j]) {
+            ans = min(ans, (k - i) + solve(s1, s2, k + 1, j + 1));
+            break;
+        } else {
+            ans = min(ans, 1 + solve(s1, s2, i + 1, j));
+            ans = min(ans, 1 + solve(s1, s2, i, j + 1));
+            ans = min(ans, 1 + solve(s1, s2, i + 1, j + 1));
+            break;
+        }
+    }
+    return dp[i][j] = ans;
 }
+
 
 void fun(){
     // your code
     string s1,s2;cin>>s1>>s2;
     memset(dp,-1,sizeof(dp));
-    cout<< solve(s1,s2,0,0)<<endl;
+    cout<<solve(s1,s2,0,0);
 }
 
 int main()

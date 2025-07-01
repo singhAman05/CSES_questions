@@ -1,7 +1,7 @@
-// Problem: Rectangle Cutting
-// Contest: CSES - CSES Problem Set
-// URL: https://cses.fi/problemset/task/1744
-// Memory Limit: 512 MB
+// Problem: B. Swap and Delete
+// Contest: Codeforces - Educational Codeforces Round 160 (Rated for Div. 2)
+// URL: https://codeforces.com/problemset/problem/1913/B
+// Memory Limit: 256 MB
 // Time Limit: 1000 ms
 // 
 // Powered by CP Editor (https://cpeditor.org)
@@ -23,8 +23,6 @@ typedef unordered_map<char,int> uocm;
 
 const ll MOD = 1e9 + 7;
 const ll INF = 1e18;
-
-int dp[501][501];
 
 #define FOR(i, a, b) for (int i = a; i <= b; i++)
 #define REP(i, a, b) for (int i = a; i < b; i++)
@@ -71,29 +69,17 @@ bool is_prime(ll n) {
     return true;
 }
 
-int solve(int n, int m){
-	if(n==m) return dp[n][m] = 0;
-	if(dp[n][m]!=-1) return dp[n][m];
-	int ans = INT_MAX;
-	
-	//vertical cut
-	for(int k=1;k<n;k++){
-		ans = min(ans, 1+solve(k,m)+solve(n-k,m));
-	}
-	
-	//horizontal cut
-	for(int k=1;k<m;k++){
-		ans = min(ans, 1+solve(n,k)+solve(n,m-k));
-	}
-	
-	return dp[n][m] = ans;
-}
-
 void fun(){
     // your code
-    int n,m;cin>>n>>m;
-    memset(dp,-1,sizeof(dp));
-    cout<<solve(n,m);
+    string s;cin>>s;
+    int n = s.size();
+    int z=0,o=0;
+    REP(i,0,n){
+    	if(s[i]=='0') z++;
+    	else o++;
+    }
+    
+    cout<<abs(z-o)<<endl;
 }
 
 int main()
@@ -101,8 +87,8 @@ int main()
     ios_base::sync_with_stdio(false);
     cin.tie(0);
     cout.tie(0);
-    int t=1;
-    // cin >> t;
+    int t;
+    cin >> t;
     while (t--) {
         fun();
     }

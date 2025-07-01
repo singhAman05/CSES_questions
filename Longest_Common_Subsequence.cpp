@@ -1,6 +1,6 @@
-// Problem: Rectangle Cutting
+// Problem: Longest Common Subsequence
 // Contest: CSES - CSES Problem Set
-// URL: https://cses.fi/problemset/task/1744
+// URL: https://cses.fi/problemset/task/3403
 // Memory Limit: 512 MB
 // Time Limit: 1000 ms
 // 
@@ -23,8 +23,7 @@ typedef unordered_map<char,int> uocm;
 
 const ll MOD = 1e9 + 7;
 const ll INF = 1e18;
-
-int dp[501][501];
+int dp[1001][1001];
 
 #define FOR(i, a, b) for (int i = a; i <= b; i++)
 #define REP(i, a, b) for (int i = a; i < b; i++)
@@ -71,29 +70,51 @@ bool is_prime(ll n) {
     return true;
 }
 
-int solve(int n, int m){
-	if(n==m) return dp[n][m] = 0;
-	if(dp[n][m]!=-1) return dp[n][m];
-	int ans = INT_MAX;
-	
-	//vertical cut
-	for(int k=1;k<n;k++){
-		ans = min(ans, 1+solve(k,m)+solve(n-k,m));
-	}
-	
-	//horizontal cut
-	for(int k=1;k<m;k++){
-		ans = min(ans, 1+solve(n,k)+solve(n,m-k));
-	}
-	
-	return dp[n][m] = ans;
+int solve(const vi &v1, const vi &v2, int i, int j){
+	if(i >= v1.size() || j >= v2.size()) return 0;
+	if(dp[i][j] != -1) return dp[i][j];
+
+	if(v1[i] == v2[j])
+		return dp[i][j] = 1 + solve(v1, v2, i+1, j+1);
+	else
+		return dp[i][j] = max(solve(v1, v2, i+1, j), solve(v1, v2, i, j+1));
 }
 
-void fun(){
-    // your code
-    int n,m;cin>>n>>m;
-    memset(dp,-1,sizeof(dp));
-    cout<<solve(n,m);
+vi buildLCS(const vi &v1, const vi &v2) {
+    int i = 0, j = 0;
+    vi res;
+
+    while (i < v1.size() && j < v2.size()) {
+        if (v1[i] == v2[j]) {
+            res.push_back(v1[i]);
+            i++;
+            j++;
+        } else if (dp[i + 1][j] >= dp[i][j + 1]) {
+            i++;
+        } else {
+            j++;
+        }
+    }
+
+    return res;
+}
+
+void fun() {
+    int n, m;
+    cin >> n >> m;
+    vi v1(n), v2(m);
+    REP(i, 0, n) cin >> v1[i];
+    REP(i, 0, m) cin >> v2[i];
+    
+    memset(dp, -1, sizeof(dp));
+    solve(v1, v2, 0, 0);
+
+    vi y = buildLCS(v1, v2);
+
+    cout << y.size() << endl;
+    for (int val : y)
+        cout << val << " ";
+    cout << endl;
 }
 
 int main()
