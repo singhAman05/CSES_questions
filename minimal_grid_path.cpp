@@ -1,6 +1,6 @@
-// Problem: Rectangle Cutting
+// Problem: Minimal Grid Path
 // Contest: CSES - CSES Problem Set
-// URL: https://cses.fi/problemset/task/1744
+// URL: https://cses.fi/problemset/task/3359
 // Memory Limit: 512 MB
 // Time Limit: 1000 ms
 // 
@@ -24,7 +24,10 @@ typedef unordered_map<char,int> uocm;
 const ll MOD = 1e9 + 7;
 const ll INF = 1e18;
 
-int dp[501][501];
+int n;
+vector<vector<char>> v;
+vector<vector<string>> memo;
+
 
 #define FOR(i, a, b) for (int i = a; i <= b; i++)
 #define REP(i, a, b) for (int i = a; i < b; i++)
@@ -71,29 +74,24 @@ bool is_prime(ll n) {
     return true;
 }
 
-int solve(int a, int b){
-	if(a==b) return 0;
-	if(dp[a][b]!=-1) return dp[a][b];
-	int mini = 1e9;
-	
-	//horizontal cuts
-	for(int i=1;i<b;i++){
-		mini = min(mini,solve(a,i)+solve(a,b-i)+1);
-	}
-	
-	//vertical cuts
-	for(int i=1;i<a;i++){
-		mini = min(mini,solve(i,b)+solve(a-i,b)+1);
-	}
-	
-	return dp[a][b] = mini;
+string solve(int i, int j){
+    if(i>=n || j>=n) return string(1, char('Z'+1));
+    if(!memo[i][j].empty()) return memo[i][j];
+    if(i==n-1 && j==n-1)
+        return memo[i][j] = string(1, v[i][j]);
+    string down = solve(i+1, j);
+    string right = solve(i, j+1);
+    string withDown = v[i][j] + down;
+    string withRight = v[i][j] + right;
+    return memo[i][j] = (withDown < withRight ? withDown : withRight);
 }
- 
+
 void fun(){
-    // your code
-    memset(dp,-1,sizeof(dp));
-    ll a,b;cin>>a>>b;
-    cout<<solve(a,b);
+    cin>>n;
+    v.assign(n, vector<char>(n));
+    REP(i,0,n) REP(j,0,n) cin>>v[i][j];
+    memo.assign(n, vector<string>(n, ""));
+    cout<<solve(0,0)<<"\n";
 }
 
 int main()
