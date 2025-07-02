@@ -28,6 +28,7 @@ const ll INF = 1e18;
 #define REP(i, a, b) for (int i = a; i < b; i++)
 #define REV(i, a, b) for (int i = a; i >= b; i--)
 #define all(v) v.begin(), v.end()
+#define nl "\n"
 
 // GCD
 ll gcd(ll a, ll b) {
@@ -68,43 +69,35 @@ bool is_prime(ll n) {
     return true;
 }
 
+int n;
 ll dp[501][125251];
-
-ll solve(ll n, ll sum, int i, ll cur) {
-    if (cur == sum) return 1;
-    if (i > n) return 0;
-    if (dp[i][cur] != -1) return dp[i][cur];
-    
-    // Calculate number of ways including or excluding the current number
-    ll include = solve(n, sum, i + 1, cur + i) % MOD;
-    ll exclude = solve(n, sum, i + 1, cur) % MOD;
-    
-    return dp[i][cur] = (include + exclude) % MOD;
+ll solve(int res,int sum,int i){
+	if(sum==res) return 1;
+    if(i>n) return 0;
+    if(dp[i][sum]!=-1) return dp[i][sum];
+    return dp[i][sum]=(solve(res,sum+i,i+1)%MOD+solve(res,sum,i+1)%MOD)%MOD;
+}
+void fun(){
+    cin>>n;
+    ll S=(ll)n*(n+1)/2;
+    if(S&1){cout<<"0\n";return;}
+    int res=S/2;
+    memset(dp,-1,sizeof(dp));
+    cout<<(solve(res,0,1)/2)%MOD<<endl;
 }
 
-void fun() {
-    ll n; cin >> n;
-    ll sum = n * (n + 1) / 2;
-    if (sum % 2 != 0) {
-        cout << "0\n";
-        return;
-    }
-    sum /= 2;
-    memset(dp, -1, sizeof(dp));
-    // Each partition is counted twice, so divide by 2
-    cout << (solve(n, sum, 1, 0) * 500000004) % MOD << "\n"; // 500000004 is the modular inverse of 2 under MOD
-}
 
-int main() {
+
+
+int main()
+{
     ios_base::sync_with_stdio(false);
     cin.tie(0);
     cout.tie(0);
-    
-    int t = 1;
-    // cin >> t; // Uncomment if multiple test cases are used
+    int t=1;
+    // cin >> t;
     while (t--) {
         fun();
     }
-    
     return 0;
 }
