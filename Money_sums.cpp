@@ -24,10 +24,13 @@ typedef unordered_map<char,int> uocm;
 const ll MOD = 1e9 + 7;
 const ll INF = 1e18;
 
+int dp[101][100001];
+
 #define FOR(i, a, b) for (int i = a; i <= b; i++)
 #define REP(i, a, b) for (int i = a; i < b; i++)
 #define REV(i, a, b) for (int i = a; i >= b; i--)
 #define all(v) v.begin(), v.end()
+#define nl "\n"
 
 // GCD
 ll gcd(ll a, ll b) {
@@ -68,57 +71,41 @@ bool is_prime(ll n) {
     return true;
 }
 
-int dp[102][100001];
+seti st;
 
-void solve(vl &v, int i, int sum, unordered_set<int> &st) {
-    if (i == v.size()) {
-        st.insert(sum);
-        return;
-    }
-    if(dp[i][sum]!=-1) return;
-    
-    dp[i][sum] = 1;
-    // Recursively call without including current element
-    solve(v, i + 1, sum, st);
-    
-    // Recursively call including current element
-    solve(v, i + 1, sum + v[i], st);
+void solve(vi &v, int i, int sum){
+	if(i>=(int)v.size()){
+		if(sum!=0) st.insert(sum);
+		return;
+	}
+	if(dp[i][sum]!=-1) return;
+	dp[i][sum] = 1;
+	solve(v,i+1,sum); // not take
+	solve(v,i+1,sum+v[i]); // take;
 }
 
-void fun() {
-    ll n;
-    cin >> n; // Input size of vector
-    vl v(n);
-    
-    for (int i = 0; i < n; i++) {
-        cin >> v[i]; // Input elements of vector
-    }
-    
+void fun(){
+    // your code
+    int n;cin>>n;
+    vi v(n);
+    REP(i,0,n) cin>>v[i];
     memset(dp,-1,sizeof(dp));
-    
-    unordered_set<int> st; // To store unique sums
-    solve(v, 0, 0, st);
-    
-    vl ans(st.begin(), st.end()); // Convert unordered_set to vector
-    sort(ans.begin(), ans.end()); // Sort the sums
-    cout<<ans.size()-1<<endl;
-    // Output all sums except the first (which is zero)
-    for (int i = 1; i < ans.size(); i++) { 
-        cout << ans[i] << " ";
+    solve(v,0,0);
+    cout<<st.size()<<endl;
+    for(auto it : st){
+    	cout<<it<<" ";
     }
-    cout << endl; // Print a new line at the end
 }
 
-int main() {
+int main()
+{
     ios_base::sync_with_stdio(false);
     cin.tie(0);
     cout.tie(0);
-    
-    int t = 1;
-    // cin >> t;  // Uncomment if multiple test cases are needed
+    int t=1;
+    // cin >> t;
     while (t--) {
         fun();
     }
-    
     return 0;
 }
